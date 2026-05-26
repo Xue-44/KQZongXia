@@ -20,6 +20,9 @@ source_agents: ["xia-shichang", "xia-xinmeiti", "xia-xiaoshou", "xia-shouhou", "
 | **市场费用核销** | ★★★★★ | 全集团市场费用审批、核销、风控全流程 | 市场虾 |
 | **预算管控** | ★★★★★ | 年度/季度/月度预算制定、执行、预警 | 市场虾+财务虾 |
 | **多品牌市场统筹** | ★★★★★ | 四品牌市场节奏协同、资源分配 | 市场虾 |
+| **品牌策略守护** | ★★★★★ | 品牌一致性审计、品牌资产保护、费用核销风控 | 市场虾 |
+| **抖音运营策略** | ★★★★★ | 爆款脚本策划、DOU+/千川投流、直播电商排品 | 市场虾 |
+| **跨平台社媒矩阵** | ★★★★★ | 小红书/B站/视频号内容分发与达人合作 | 市场虾 |
 | **厂家政策对接** | ★★★★★ | 各品牌市场补贴、返利申报与核销 | 市场虾+财务虾 |
 | **竞品监控分析** | ★★★★★ | 同城竞品动态、价格、促销活动监控 | 市场虾+新媒体虾+销售虾 |
 | **市场活动策划** | ★★★★★ | 车展、线上推广、线下活动策划与执行 | 市场虾 |
@@ -48,6 +51,7 @@ source_agents: ["xia-shichang", "xia-xinmeiti", "xia-xiaoshou", "xia-shouhou", "
 | **表格制作** | ★★★★★ | 费用核销台账、预算执行表、活动报表 | 全部门 |
 | **PPT 制作** | ★★★★★ | 经营分析报告、市场策略提案 | 全部门 |
 | **全品牌市场知识** | ★★★★★ | 四品牌市场政策、商务支持、核销要求 | 全部门 |
+| **飞书集成与管理** | ★★★★★ | 飞书审批、考勤、多维表格、日历、文档、IM等全线集成 | 新媒体虾 |
 
 ## 技能清单（整合去重后）
 
@@ -87,6 +91,34 @@ source_agents: ["xia-shichang", "xia-xinmeiti", "xia-xiaoshou", "xia-shouhou", "
 | `skills/document-management.md` | 文档管理 | 行政虾 |
 | `skills/meeting-management.md` | 会议管理 | 行政虾 |
 | `skills/procurement-management.md` | 采购管理 | 行政虾 |
+| `skills/brand-guardian.md` | 品牌策略+费用核销管控 | 市场虾 |
+| `skills/douyin-strategist.md` | 抖音运营策略与直播电商 | 市场虾 |
+| `skills/social-media-strategist.md` | 跨平台社媒矩阵策略 | 市场虾 |
+| `skills/lark-approval` | 飞书审批管理 | 新媒体虾 |
+| `skills/lark-attendance` | 飞书考勤管理 | 新媒体虾 |
+| `skills/lark-base` | 飞书多维表格管理 | 新媒体虾 |
+| `skills/lark-calendar` | 飞书日历管理 | 新媒体虾 |
+| `skills/lark-contact` | 飞书通讯录管理 | 新媒体虾 |
+| `skills/lark-doc` | 飞书文档管理 | 新媒体虾 |
+| `skills/lark-drive` | 飞书云盘管理 | 新媒体虾 |
+| `skills/lark-event` | 飞书事件管理 | 新媒体虾 |
+| `skills/lark-im` | 飞书即时通讯管理 | 新媒体虾 |
+| `skills/lark-mail` | 飞书邮箱管理 | 新媒体虾 |
+| `skills/lark-markdown` | 飞书Markdown渲染 | 新媒体虾 |
+| `skills/lark-minutes` | 飞书会议纪要管理 | 新媒体虾 |
+| `skills/lark-okr` | 飞书OKR管理 | 新媒体虾 |
+| `skills/lark-openapi-explorer` | 飞书OpenAPI探索 | 新媒体虾 |
+| `skills/lark-shared` | 飞书共享能力 | 新媒体虾 |
+| `skills/lark-sheets` | 飞书电子表格管理 | 新媒体虾 |
+| `skills/lark-skill-maker` | 飞书技能创建工具 | 新媒体虾 |
+| `skills/lark-slides` | 飞书幻灯片管理 | 新媒体虾 |
+| `skills/lark-task` | 飞书任务管理 | 新媒体虾 |
+| `skills/lark-vc` | 飞书视频会议管理 | 新媒体虾 |
+| `skills/lark-vc-agent` | 飞书会议Agent | 新媒体虾 |
+| `skills/lark-whiteboard` | 飞书白板管理 | 新媒体虾 |
+| `skills/lark-wiki` | 飞书知识库管理 | 新媒体虾 |
+| `skills/lark-workflow-meeting-summary` | 飞书会议总结工作流 | 新媒体虾 |
+| `skills/lark-workflow-standup-report` | 飞书站会报告工作流 | 新媒体虾 |
 
 ## 工具脚本（整合去重后）
 
@@ -102,6 +134,8 @@ source_agents: ["xia-shichang", "xia-xinmeiti", "xia-xiaoshou", "xia-shouhou", "
 | `scripts/register_task.ps1` | 任务注册脚本 | 新媒体虾 |
 | `scripts/send_notify.ps1` | 通知发送脚本 | 新媒体虾 |
 | `scripts/sync_identity.ps1` | 身份同步脚本 | 新媒体虾 |
+| `scripts/read_pdf.py` | PDF读取工具 | 新媒体虾 |
+| `scripts/read_pdf2.py` | PDF读取工具（增强版） | 新媒体虾 |
 
 ## 数据依赖
 

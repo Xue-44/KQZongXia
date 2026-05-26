@@ -1,405 +1,382 @@
-# 图片仿作技能 — 市场推广视角 (Image Imitation for Marketing)
+# 图片仿作技能 (Image Imitation)
 
 ## 定位
 
-基于参考图片的视觉风格提取与仿作，面向市场推广场景。支持广告素材仿作、活动物料仿作、社交媒体素材仿作，适配四品牌差异化视觉体系，提升市场团队素材产出效率。
+基于参考图片，提取其风格特征（配色、构图、字体、元素），生成同风格但内容不同的新图片。支持海报仿作、活动照片仿作、设计素材仿作，并适配四品牌差异化风格。
 
 ---
 
-## 1. 仿作场景
+## 1. 仿作类型
 
-### 1.1 广告素材仿作
+### 1.1 海报仿作
 
-**场景**：参考竞品/行业爆款广告图，创作同风格的本品牌广告
+**输入**：参考海报图片 + 新文案内容 + 目标品牌
 
-**流程**：
-```
-爆款广告参考 → 风格提取 → 品牌VI适配 → 文案替换 → 合规检查 → 输出
-```
-
-**关键适配**：
-| 维度 | 参考提取 | 品牌应用 |
+**仿作要素**：
+| 要素 | 提取方式 | 应用方式 |
 |------|---------|---------|
-| 配色 | 主色/辅色/强调色 | 映射为品牌色体系 |
-| 排版 | 图文比例/阅读顺序 | 保持排版逻辑 |
-| 字体 | 字重/字号层级 | 替换为品牌字体 |
-| 元素 | 装饰图形/icon风格 | 替换为品牌元素库 |
-| 文案 | 卖点逻辑/语气 | 适配品牌调性与合规 |
+| 配色方案 | K-Means提取主色调和配色比例 | 替换为品牌色系，保持色调关系 |
+| 构图结构 | 检测文字/图片区域分割 | 保持版式，替换内容 |
+| 字体风格 | 识别粗/细/衬线/无衬线 | 替换为品牌字体 |
+| 视觉元素 | 提取装饰图形位置 | 替换为品牌元素 |
+| 文字层级 | 识别标题/副标题/正文大小 | 保持层级，替换文案 |
 
-### 1.2 活动物料仿作
+### 1.2 活动照片仿作
 
-**场景**：参考成功活动的物料设计，快速生成同风格新活动物料
+**输入**：活动照片 + 目标车型 + 目标品牌
 
-**物料类型**：
-- 活动主KV（背景板、签到墙、导视系统）
-- 邀请函（线上H5、线下纸质）
-- 现场物料（展架、易拉宝、桌牌、工作证）
-- 活动后传播物料（战报、感谢信、精彩回顾）
+**仿作要素**：
+- 场景氛围（灯光色调、场地风格）
+- 拍摄角度（前45度、正侧、内饰特写）
+- 构图方式（三分法、对称、引导线）
+- 后期风格（冷暖调、对比度、饱和度）
+- 人物姿态（站姿、手势、互动方式）
 
-### 1.3 社交媒体素材仿作
+### 1.3 设计素材仿作
 
-**场景**：参考高互动率社媒素材，生成适配四品牌调性的内容
+**输入**：参考设计素材 + 用途描述
 
-**平台适配**：
-
-| 平台 | 尺寸 | 风格要求 |
-|------|------|---------|
-| 抖音/快手 | 1080×1920 | 视觉冲击、快节奏、大字报风格 |
-| 小红书 | 1080×1440 (3:4) | 精致、种草感、生活化 |
-| 朋友圈 | 1080×1920 / 800×800 | 原生感、不突兀 |
-| 微博 | 1200×675 (16:9) | 话题性、传播性 |
-| 公众号 | 900×383 (头图) | 信息明确、品牌感 |
+**仿作要素**：
+- 图形风格（扁平/渐变/3D/手绘/线框）
+- 纹理质感（磨砂/金属/玻璃/纸质）
+- 图标体系（线性/面性/双色/多彩）
+- 装饰元素（光效、粒子、波纹、网格）
 
 ---
 
-## 2. 四品牌视觉体系映射
+## 2. 四品牌风格适配
 
-### 2.1 广汽传祺 — 科技·品质
+### 2.1 广汽传祺 — 科技+品质
 
 ```python
-TRUMPCHI_VI = {
-    "brand": "广汽传祺",
-    "primary": "#0066CC",
-    "secondary": "#C0C0C0",
-    "accent": "#FF6600",
-    "gradient": ["#0066CC", "#004C99"],
-    "font_primary": "思源黑体 Bold",
-    "font_body": "思源黑体 Regular",
-    "decor_elements": ["钻石切割线", "几何色块", "光效粒子"],
-    "image_style": "明亮、清晰、品质感",
-    "tone": "稳重可靠中带有科技温度",
-    "keywords": ["品质出行", "智能安全", "全能家用"],
+TRUMPCHI_STYLE = {
+    "primary_color": "#0066CC",      # 科技蓝
+    "secondary_color": "#C0C0C0",    # 品质银
+    "accent_color": "#FF6600",       # 活力橙
+    "bg_gradient": ["#0066CC", "#003366"],  # 蓝色渐变
+    "font_family": "思源黑体, Microsoft YaHei",
+    "decorative_elements": ["钻石切割纹", "几何线条", "光晕"],
+    "tone": "稳重中带科技感",
+    "keywords": ["品质", "科技", "可靠", "家用"],
 }
 ```
 
-### 2.2 上汽奥迪 — 豪华·性能
+### 2.2 上汽奥迪 — 豪华+质感
 
 ```python
-AUDI_VI = {
-    "brand": "上汽奥迪",
-    "primary": "#000000",
-    "secondary": "#D4AF37",
-    "accent": "#CC0000",
-    "gradient": ["#1A1A1A", "#000000"],
-    "font_primary": "Arial Bold / 思源黑体 Bold",
-    "font_body": "Arial / 思源黑体 Light",
-    "decor_elements": ["四环徽章纹", "菱形格纹理", "金属拉丝底纹"],
-    "image_style": "暗调、质感、光影层次丰富",
-    "tone": "精英克制、低调奢华",
-    "keywords": ["驾驭之美", "豪华新境", "从容进取"],
+AUDI_STYLE = {
+    "primary_color": "#000000",      # 豪华黑
+    "secondary_color": "#D4AF37",    # 金属金
+    "accent_color": "#CC0000",       # 运动红
+    "bg_gradient": ["#1A1A1A", "#000000"],  # 暗黑渐变
+    "font_family": "Arial, 思源黑体",
+    "decorative_elements": ["四环纹样", "菱形格", "金属拉丝"],
+    "tone": "低调奢华",
+    "keywords": ["豪华", "性能", "尊贵", "品质"],
 }
 ```
 
-### 2.3 广汽昊铂 — 先锋·极致
+### 2.3 广汽昊铂 — 高端+科技
 
 ```python
-HYPER_VI = {
-    "brand": "广汽昊铂",
-    "primary": "#8A2BE2",
-    "secondary": "#FFD700",
-    "accent": "#00FFFF",
-    "gradient": ["#1A0033", "#2A004D", "#0D0020"],
-    "font_primary": "Futura Bold / 思源黑体 Bold",
-    "font_body": "Futura Book / 思源黑体 Light",
-    "decor_elements": ["极光光效", "粒子流", "赛博网格", "能量环"],
-    "image_style": "未来感、暗调炫彩、赛博朋克",
-    "tone": "先锋极客、颠覆创新",
-    "keywords": ["极致性能", "智能先锋", "未来已来"],
+HYPER_STYLE = {
+    "primary_color": "#8A2BE2",      # 高端紫
+    "secondary_color": "#FFD700",    # 科技金
+    "accent_color": "#00FFFF",       # 电光青
+    "bg_gradient": ["#1A0033", "#0D0020", "#2A004D"],
+    "font_family": "Futura, 思源黑体",
+    "decorative_elements": ["极光光效", "粒子流", "赛博网格"],
+    "tone": "未来科技感",
+    "keywords": ["智能", "极致", "未来", "先锋"],
 }
 ```
 
-### 2.4 广汽埃安 — 环保·年轻
+### 2.4 广汽埃安 — 环保+年轻
 
 ```python
-AION_VI = {
-    "brand": "广汽埃安",
-    "primary": "#00B050",
-    "secondary": "#FFFFFF",
-    "accent": "#00D4FF",
-    "gradient": ["#00B050", "#008040"],
-    "font_primary": "PingFang SC Bold / 思源黑体 Bold",
-    "font_body": "PingFang SC Regular / 思源黑体 Regular",
-    "decor_elements": ["叶片脉络", "充电波", "圆润几何", "环保符号"],
-    "image_style": "明亮、清新、年轻活力",
-    "tone": "青春共鸣、轻松自信",
-    "keywords": ["潮玩出行", "绿色智能", "年轻首选"],
+AION_STYLE = {
+    "primary_color": "#00B050",      # 环保绿
+    "secondary_color": "#FFFFFF",    # 科技白
+    "accent_color": "#00D4FF",       # 天空蓝
+    "bg_gradient": ["#00B050", "#006633"],  # 绿色渐变
+    "font_family": "PingFang SC, 思源黑体",
+    "decorative_elements": ["叶片纹样", "充电波", "圆润几何"],
+    "tone": "清新活力",
+    "keywords": ["环保", "智能", "年轻", "出行"],
 }
 ```
 
 ---
 
-## 3. 仿作流水线
+## 3. 仿作流程
 
 ```
-┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐
-│ 参考输入  │ → │ 风格提取  │ → │ 品牌适配  │ → │ 内容替换  │
-│ 图片+文案 │    │ 配色/排版 │    │ VI映射    │    │ 元素+文案 │
-└──────────┘    └──────────┘    └──────────┘    └──────────┘
-                                                       ↓
-┌──────────┐    ┌──────────┐    ┌──────────┐
-│ 最终输出  │ ← │ 合规检查  │ ← │ 合成导出  │
-│ 成品素材  │    │ 品牌规范  │    │ 多格式    │
-└──────────┘    └──────────┘    └──────────┘
+参考图片 → 风格提取 → 品牌映射 → 元素替换 → 合成输出
+   │            │           │           │           │
+   │        配色分析    品牌VI映射   文案替换     质量检查
+   │        构图分析    字体映射     元素替换     尺寸规范
+   │        元素识别    装饰映射     Logo嵌入     色彩检查
 ```
 
 ---
 
 ## 4. 代码示例
 
-### 4.1 参考风格提取器
+### 4.1 风格提取器
 
 ```python
-from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageStat
-import cv2
+from PIL import Image, ImageStat, ImageFilter
 import numpy as np
+import cv2
 from collections import Counter
 
 
-def extract_marketing_style(image_path: str) -> dict:
+def extract_style_from_reference(image_path: str) -> dict:
     """
-    从参考图片（广告/海报/社媒素材）中提取市场推广风格特征
+    从参考图片中提取风格特征
+    返回配色、构图、亮度等信息
     """
     img = cv2.imread(image_path)
-    if img is None:
-        return {"error": f"无法读取图片: {image_path}"}
-
     img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    pil_img = Image.open(image_path).convert("RGBA")
+    pil_img = Image.open(image_path)
     height, width = img_rgb.shape[:2]
 
     style = {
-        "file": image_path,
-        "size": f"{width}x{height}",
-        "ratio": round(width / height, 2),
+        "image_size": f"{width}x{height}",
+        "aspect_ratio": round(width / height, 2),
     }
 
-    # --- 配色方案提取 (K-Means, 6色) ---
+    # --- 配色提取 ---
     pixels = img_rgb.reshape(-1, 3).astype(np.float32)
-    criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 1.0)
-    _, labels, centers = cv2.kmeans(pixels, 6, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS)
+    criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 20, 1.0)
+    _, labels, centers = cv2.kmeans(
+        pixels, 6, None, criteria, 10, cv2.KMEANS_RANDOM_CENTERS
+    )
     centers = centers.astype(np.uint8)
     unique, counts = np.unique(labels, return_counts=True)
+    sorted_idx = np.argsort(counts)[::-1]
 
     palette = []
-    for idx in np.argsort(counts)[::-1]:
+    for idx in sorted_idx[:5]:
         color = tuple(centers[idx].tolist())
         hex_color = "#{:02X}{:02X}{:02X}".format(*color)
         ratio = round(counts[idx] / len(labels), 3)
-        palette.append({"hex": hex_color, "rgb": list(color), "ratio": ratio})
+        palette.append({"hex": hex_color, "rgb": color, "ratio": ratio})
 
-    style["palette"] = palette
-    style["dominant"] = palette[0]["hex"]
+    style["color_palette"] = palette
+    style["dominant_color"] = palette[0]["hex"]
 
-    # --- 色调分析 ---
-    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    mean_hue = np.mean(hsv[:, :, 0])
-    mean_sat = np.mean(hsv[:, :, 1])
-    mean_val = np.mean(hsv[:, :, 2])
-
-    style["hue_mean"] = round(mean_hue, 1)
-    style["sat_mean"] = round(mean_sat, 1)
-    style["val_mean"] = round(mean_val, 1)
-
-    # --- 排版布局分析 ---
+    # --- 亮度与对比度 ---
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    edges = cv2.Canny(gray, 40, 120)
+    style["mean_brightness"] = round(np.mean(gray), 1)
+    style["contrast"] = round(np.std(gray), 1)
 
-    # 四象限内容密度
-    h_half, w_half = height // 2, width // 2
-    quadrants = {
-        "左上": edges[:h_half, :w_half],
-        "右上": edges[:h_half, w_half:],
-        "左下": edges[h_half:, :w_half],
-        "右下": edges[h_half:, w_half:],
-    }
-    layout = {}
-    for name, quad in quadrants.items():
-        layout[name] = round(np.sum(quad > 0) / quad.size, 4)
-
-    style["layout_density"] = layout
-    max_quad = max(layout, key=layout.get)
-    style["visual_weight"] = f"视觉重心偏{max_quad}"
-
-    # --- 清晰度/质感 ---
-    laplacian_var = cv2.Laplacian(gray, cv2.CV_64F).var()
-    if laplacian_var > 500:
-        style["sharpness"] = "高（高清/专业摄影）"
-    elif laplacian_var > 100:
-        style["sharpness"] = "中（正常质量）"
+    # --- 饱和度和色调 ---
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    style["mean_saturation"] = round(np.mean(hsv[:, :, 1]), 1)
+    hue_mean = np.mean(hsv[:, :, 0])
+    if hue_mean < 30 or hue_mean > 150:
+        style["color_temperature"] = "暖色调"
+    elif 80 < hue_mean < 130:
+        style["color_temperature"] = "冷色调"
     else:
-        style["sharpness"] = "低（可能模糊/压缩过度）"
+        style["color_temperature"] = "中性调"
+
+    # --- 构图检测 ---
+    # 检测三分线位置
+    style["composition"] = detect_composition(img_rgb)
+
+    # --- 文字区域检测 ---
+    mser = cv2.MSER_create()
+    text_regions, _ = mser.detectRegions(gray)
+    text_areas = []
+    for region in text_regions:
+        x, y, w, h = cv2.boundingRect(region)
+        if w > 30 and h > 15:
+            zone = "top" if y < height / 3 else ("center" if y < 2 * height / 3 else "bottom")
+            text_areas.append({
+                "position": f"({x}, {y})", "size": f"{w}x{h}",
+                "zone": zone, "area": w * h
+            })
+    text_areas.sort(key=lambda t: t["area"], reverse=True)
+    style["text_regions"] = text_areas[:5]
+
+    # --- 边缘复杂度 ---
+    edges = cv2.Canny(gray, 50, 150)
+    style["edge_density"] = round(np.sum(edges > 0) / (height * width), 4)
 
     return style
+
+
+def detect_composition(img_rgb: np.ndarray) -> str:
+    """检测图片构图方式"""
+    h, w = img_rgb.shape[:2]
+    gray = cv2.cvtColor(img_rgb, cv2.COLOR_RGB2GRAY)
+    # 简化版：基于边缘分布判断
+    edges = cv2.Canny(gray, 50, 150)
+
+    left_third = np.sum(edges[:, :w//3] > 0)
+    center_third = np.sum(edges[:, w//3:2*w//3] > 0)
+    right_third = np.sum(edges[:, 2*w//3:] > 0)
+
+    total = left_third + center_third + right_third
+    if total == 0:
+        return "均匀分布"
+
+    left_ratio = left_third / total
+    center_ratio = center_third / total
+
+    if center_ratio > 0.5:
+        return "中心构图"
+    elif abs(left_ratio - (1 - left_ratio)) < 0.15:
+        return "对称构图"
+    elif left_ratio < 0.35:
+        return "右重构图（三分法）"
+    else:
+        return "左重构图（三分法）"
 ```
 
 ### 4.2 品牌风格应用器
 
 ```python
-def apply_brand_overlay(
+from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageEnhance
+
+
+def apply_brand_style(
     base_image_path: str,
     brand: str,
-    output_path: str,
-    headline: str = "",
-    subheadline: str = "",
-    cta_text: str = "",
-    logo_path: str = "",
+    output_path: str = None,
+    overlay_text: str = None,
+    text_position: str = "bottom",
 ) -> str:
     """
-    为图片应用品牌视觉叠加层
+    将参考图片的风格映射为指定品牌风格
 
     参数:
-        base_image_path: 底图路径
-        brand: 品牌 (trumpchi/audi/hyper/aion)
+        base_image_path: 参考图路径
+        brand: 目标品牌 (trumpchi / audi / hyper / aion)
         output_path: 输出路径
-        headline: 主标题
-        subheadline: 副标题
-        cta_text: 行动号召文字
-        logo_path: logo文件路径（可选）
+        overlay_text: 叠加的文案
+        text_position: 文案位置 (top / center / bottom)
     """
-    brand_configs = {
+    brand_styles = {
         "trumpchi": {
+            "primary": "#0066CC", "secondary": "#C0C0C0",
+            "gradient_start": (0, 102, 204), "gradient_end": (0, 51, 102),
             "name": "广汽传祺",
-            "primary": (0, 102, 204),
-            "secondary": (192, 192, 192),
-            "accent": (255, 102, 0),
-            "gradient_top": (0, 102, 204, 60),
-            "gradient_bot": (0, 51, 102, 180),
         },
         "audi": {
+            "primary": "#000000", "secondary": "#D4AF37",
+            "gradient_start": (26, 26, 26), "gradient_end": (0, 0, 0),
             "name": "上汽奥迪",
-            "primary": (0, 0, 0),
-            "secondary": (212, 175, 55),
-            "accent": (204, 0, 0),
-            "gradient_top": (0, 0, 0, 20),
-            "gradient_bot": (0, 0, 0, 200),
         },
         "hyper": {
+            "primary": "#8A2BE2", "secondary": "#FFD700",
+            "gradient_start": (26, 0, 51), "gradient_end": (42, 0, 77),
             "name": "广汽昊铂",
-            "primary": (138, 43, 226),
-            "secondary": (255, 215, 0),
-            "accent": (0, 255, 255),
-            "gradient_top": (26, 0, 51, 40),
-            "gradient_bot": (42, 0, 77, 190),
         },
         "aion": {
+            "primary": "#00B050", "secondary": "#FFFFFF",
+            "gradient_start": (0, 176, 80), "gradient_end": (0, 102, 51),
             "name": "广汽埃安",
-            "primary": (0, 176, 80),
-            "secondary": (255, 255, 255),
-            "accent": (0, 212, 255),
-            "gradient_top": (0, 176, 80, 40),
-            "gradient_bot": (0, 102, 51, 180),
         },
     }
 
     brand = brand.lower()
-    if brand not in brand_configs:
-        raise ValueError(f"不支持的品牌: {brand}")
+    if brand not in brand_styles:
+        raise ValueError(f"不支持的品牌: {brand}。可选: {list(brand_styles.keys())}")
 
-    config = brand_configs[brand]
+    style = brand_styles[brand]
     img = Image.open(base_image_path).convert("RGBA")
     w, h = img.size
 
-    # 创建遮罩层（底部渐变 + 品牌色调）
-    overlay = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-    draw = ImageDraw.Draw(overlay)
+    # 1. 创建品牌色渐变叠加层
+    gradient = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    for y in range(h):
+        ratio = y / h
+        r = int(style["gradient_start"][0] * (1 - ratio) + style["gradient_end"][0] * ratio)
+        g = int(style["gradient_start"][1] * (1 - ratio) + style["gradient_end"][1] * ratio)
+        b = int(style["gradient_start"][2] * (1 - ratio) + style["gradient_end"][2] * ratio)
+        for x in range(w):
+            gradient.putpixel((x, y), (r, g, b, 40))  # 40为透明度
 
-    # 底部渐变
-    gradient_height = h // 3
-    for y in range(h - gradient_height, h):
-        ratio = (y - (h - gradient_height)) / gradient_height
-        alpha = int(180 * ratio)
-        draw.rectangle([0, y, w, y + 1], fill=(0, 0, 0, alpha))
+    # 2. 合成渐变色
+    img = Image.alpha_composite(img, gradient)
 
-    img = Image.alpha_composite(img, overlay)
-
-    # 绘制文字
+    # 3. 添加品牌色边框
     draw = ImageDraw.Draw(img)
-    try:
-        font_headline = ImageFont.truetype("C:/Windows/Fonts/msyhbd.ttc", min(w // 12, 80))
-        font_sub = ImageFont.truetype("C:/Windows/Fonts/msyh.ttc", min(w // 20, 42))
-        font_cta = ImageFont.truetype("C:/Windows/Fonts/msyhbd.ttc", min(w // 22, 36))
-    except OSError:
-        font_headline = font_sub = font_cta = ImageFont.load_default()
+    border_width = 4
+    border_color = style["primary"]
+    draw.rectangle([0, 0, w - 1, h - 1], outline=border_color, width=border_width)
 
-    # --- 主标题 ---
-    if headline:
-        bbox = draw.textbbox((0, 0), headline, font=font_headline)
-        tw = bbox[2] - bbox[0]
-        th = bbox[3] - bbox[1]
-        tx = (w - tw) // 2
-        ty = h - gradient_height + 40
+    # 4. 叠加文案（如果提供）
+    if overlay_text:
+        try:
+            font_size = min(w // 15, 80)
+            font = ImageFont.truetype("C:/Windows/Fonts/msyh.ttc", font_size)
+        except OSError:
+            font = ImageFont.load_default()
+
         # 文字阴影
-        draw.text((tx + 2, ty + 2), headline, fill=(0, 0, 0, 120), font=font_headline)
-        draw.text((tx, ty), headline, fill=config["secondary"], font=font_headline)
+        shadow_draw = ImageDraw.Draw(img)
+        text_bbox = draw.textbbox((0, 0), overlay_text, font=font)
+        text_w = text_bbox[2] - text_bbox[0]
+        text_h = text_bbox[3] - text_bbox[1]
 
-    # --- 副标题 ---
-    if subheadline:
-        bbox = draw.textbbox((0, 0), subheadline, font=font_sub)
-        tw = bbox[2] - bbox[0]
-        tx = (w - tw) // 2
-        ty = h - gradient_height + 40 + (font_headline.size if headline else 0) + 20
-        draw.text((tx, ty), subheadline, fill=config["secondary"], font=font_sub)
+        if text_position == "bottom":
+            text_y = h - text_h - 60
+        elif text_position == "top":
+            text_y = 40
+        else:
+            text_y = (h - text_h) // 2
+        text_x = (w - text_w) // 2
 
-    # --- CTA ---
-    if cta_text:
-        bbox = draw.textbbox((0, 0), cta_text, font=font_cta)
-        tw = bbox[2] - bbox[0]
-        th = bbox[3] - bbox[1]
-        tx = (w - tw) // 2
-        ty = h - 80
-        # CTA 背景条
-        padding = 30
-        draw.rounded_rectangle(
-            [tx - padding, ty - padding // 2,
-             tx + tw + padding, ty + th + padding // 2],
-            radius=10, fill=config["primary"]
+        # 文字底色条
+        bar_padding = 20
+        draw.rectangle(
+            [text_x - bar_padding, text_y - bar_padding // 2,
+             text_x + text_w + bar_padding, text_y + text_h + bar_padding // 2],
+            fill=(0, 0, 0, 160)
         )
-        draw.text((tx, ty), cta_text, fill=(255, 255, 255), font=font_cta)
+        # 品牌色底线
+        draw.line(
+            [text_x - bar_padding, text_y + text_h + bar_padding // 2,
+             text_x + text_w + bar_padding, text_y + text_h + bar_padding // 2],
+            fill=style["primary"], width=3
+        )
+        # 绘制文字
+        draw.text((text_x, text_y), overlay_text, fill=style["secondary"], font=font)
 
-    # --- 品牌角标 ---
-    draw.text((30, 30), config["name"], fill=config["secondary"], font=font_sub)
-
+    # 5. 保存
+    output = output_path or base_image_path.replace(".", f"_{brand}.")
     img = img.convert("RGB")
-    img.save(output_path, quality=95)
-    return output_path
+    img.save(output, quality=95)
+    return output
 
 
-def create_social_media_variant(
-    image_path: str,
-    brand: str,
-    platform: str,
-    output_path: str,
-    text: str = "",
+def create_branded_thumbnail(
+    image_path: str, brand: str, title: str, output_path: str
 ) -> str:
     """
-    根据平台生成适配尺寸的社交媒体素材
-
-    参数:
-        image_path: 原始图片
-        brand: 品牌
-        platform: 平台 (douyin/xiaohongshu/wechat/weibo/gongzhonghao)
-        output_path: 输出路径
-        text: 叠加文案
+    为图片创建带品牌标识的缩略图/封面
+    适用于社交媒体封面、视频封面等
     """
-    platform_sizes = {
-        "douyin": (1080, 1920),
-        "xiaohongshu": (1080, 1440),
-        "wechat_feed": (1080, 1920),
-        "wechat_square": (800, 800),
-        "weibo": (1200, 675),
-        "gongzhonghao": (900, 383),
+    style_configs = {
+        "trumpchi": {"primary": "#0066CC", "accent": "#FF6600", "logo_text": "GAC"},
+        "audi": {"primary": "#D4AF37", "accent": "#CC0000", "logo_text": "OOOO"},
+        "hyper": {"primary": "#8A2BE2", "accent": "#FFD700", "logo_text": "HYPER"},
+        "aion": {"primary": "#00B050", "accent": "#FFFFFF", "logo_text": "AION"},
     }
 
-    if platform not in platform_sizes:
-        raise ValueError(f"不支持的平台: {platform}")
+    brand = brand.lower()
+    config = style_configs[brand]
 
-    target_w, target_h = platform_sizes[platform]
     img = Image.open(image_path).convert("RGBA")
+    target_w, target_h = 1080, 1920  # 竖版封面
 
     # 裁剪填充
     img_ratio = img.width / img.height
     target_ratio = target_w / target_h
-
     if img_ratio > target_ratio:
         new_w = int(img.height * target_ratio)
         left = (img.width - new_w) // 2
@@ -411,87 +388,87 @@ def create_social_media_variant(
 
     img = img.resize((target_w, target_h), Image.LANCZOS)
 
-    # 应用品牌样式
-    output = apply_brand_overlay(
-        image_path, brand, output_path,
-        headline=text if platform in ("douyin", "xiaohongshu") else "",
-    )
-    return output
+    # 底部渐变遮罩
+    overlay = Image.new("RGBA", (target_w, target_h), (0, 0, 0, 0))
+    draw_overlay = ImageDraw.Draw(overlay)
+    for y in range(target_h // 2, target_h):
+        alpha = int(200 * (y - target_h // 2) / (target_h // 2))
+        draw_overlay.rectangle([0, y, target_w, y + 1], fill=(0, 0, 0, alpha))
+    img = Image.alpha_composite(img, overlay)
 
+    # 标题文字
+    draw = ImageDraw.Draw(img)
+    try:
+        font_title = ImageFont.truetype("C:/Windows/Fonts/msyhbd.ttc", 72)
+        font_brand = ImageFont.truetype("C:/Windows/Fonts/msyhbd.ttc", 36)
+    except OSError:
+        font_title = ImageFont.load_default()
+        font_brand = ImageFont.load_default()
 
-def batch_generate_materials(
-    reference_image: str,
+    # 标题
+    title_bbox = draw.textbbox((0, 0), title, font=font_title)
+    title_w = title_bbox[2] - title_bbox[0]
+    draw.text(((target_w - title_w) // 2, target_h - 300), title,
+              fill=config["accent"], font=font_title)
+
+    # 品牌标识
+    brand_bbox = draw.textbbox((0, 0), config["logo_text"], font=font_brand)
+    brand_w = brand_bbox[2] - brand_bbox[0]
+    draw.text(((target_w - brand_w) // 2, target_h - 200), config["logo_text"],
+              fill=config["primary"], font=font_brand)
+
+    img = img.convert("RGB")
+    img.save(output_path, quality=95)
+    return output_path
+```
+
+### 4.3 批量仿作流水线
+
+```python
+def batch_imitation(
+    reference_paths: list,
     brand: str,
     output_dir: str,
-    headlines: list,
-    platforms: list = None,
-) -> dict:
+    texts: list = None,
+) -> list:
     """
-    基于一张参考图，批量生成多平台多文案素材
+    批量仿作：输入多张参考图，统一应用品牌风格
 
     参数:
-        reference_image: 参考底图
+        reference_paths: 参考图片路径列表
         brand: 目标品牌
         output_dir: 输出目录
-        headlines: 文案列表
-        platforms: 平台列表，默认全部
+        texts: 对应每张图的文案（可选）
     """
     import os
     os.makedirs(output_dir, exist_ok=True)
 
-    if platforms is None:
-        platforms = ["douyin", "xiaohongshu", "wechat_feed", "weibo"]
-
     results = []
-    for i, headline in enumerate(headlines):
-        for platform in platforms:
-            output_name = f"{brand}_{platform}_v{i+1}.jpg"
-            output_path = os.path.join(output_dir, output_name)
-            create_social_media_variant(
-                reference_image, brand, platform, output_path, headline
-            )
-            results.append({"platform": platform, "headline": headline, "output": output_path})
+    for i, ref_path in enumerate(reference_paths):
+        # 提取参考风格
+        ref_style = extract_style_from_reference(ref_path)
 
-    return {
-        "total": len(results),
-        "brand": brand,
-        "files": results,
-    }
+        # 应用品牌风格
+        text = texts[i] if texts and i < len(texts) else None
+        output_name = f"imitation_{brand}_{i+1:03d}.jpg"
+        output_path = os.path.join(output_dir, output_name)
+
+        output = apply_brand_style(ref_path, brand, output_path, text)
+
+        results.append({
+            "reference": ref_path,
+            "reference_style": ref_style,
+            "output": output,
+            "brand": brand,
+        })
+
+    return results
 ```
 
 ---
 
 ## 5. 使用说明
 
-### 典型工作流
-
-```python
-# 1. 分析参考图的风格
-style = extract_marketing_style("竞品爆款海报.jpg")
-
-# 2. 基于风格生成品牌素材
-apply_brand_overlay(
-    "底图.jpg", "trumpchi",
-    "output.jpg",
-    headline="传祺GS8 春季焕新",
-    subheadline="大7座 · 超低油耗 · 智能安全",
-    cta_text="立即预约试驾 →"
-)
-
-# 3. 批量生成社交媒体版本
-batch_generate_materials(
-    "底图.jpg", "aion", "./output/",
-    headlines=["年轻人的第一台电车", "月薪8K也养得起", "一周充一次电"],
-    platforms=["douyin", "xiaohongshu"]
-)
-```
-
-### 命令行快速使用
-
-```bash
-# 风格分析
-python -c "from image_imitation import extract_marketing_style; print(extract_marketing_style('ref.jpg'))"
-
-# 品牌叠加
-python -c "from image_imitation import apply_brand_overlay; apply_brand_overlay('base.jpg','audi','out.jpg','奥迪A7L')"
-```
+1. **单图仿作**：`apply_brand_style("参考图.jpg", "trumpchi", "输出.jpg", "春季促销")`
+2. **封面生成**：`create_branded_thumbnail("车图.jpg", "audi", "全新A7L上市", "封面.jpg")`
+3. **批量仿作**：`batch_imitation(["ref1.jpg", "ref2.jpg"], "aion", "./output/", ["文案1", "文案2"])`

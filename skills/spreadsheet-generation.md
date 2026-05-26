@@ -1,406 +1,326 @@
-# 市场推广表格制作技能
+# 新媒体表格制作技能
 
 ## 技能定位
-本技能用于生成市场推广相关的数据表格，面向集团和各品牌的市场管理人员，支持市场费用明细、预算追踪、活动评估、线索转化、竞品监测等多种场景。
+本技能用于生成新媒体运营相关的数据表格，支持平台数据汇总、内容排期、KPI追踪、竞品对比、月度运营数据表等多种场景。
 
 ## 支持场景
 | 场景 | 说明 | 使用频率 |
 |------|------|---------|
-| 市场费用明细表 | 按品牌/区域/类型分类的费用明细 | 每月 |
-| 预算执行追踪表 | 年度预算执行进度追踪 | 持续 |
-| 活动效果评估表 | 单场/系列活动ROI评估 | 活动后 |
-| 线索转化追踪表 | 线索获取到成交全链路追踪 | 每周 |
-| 竞品动态监测表 | 竞品市场活动与费用动态记录 | 每月 |
+| 各平台数据汇总表 | 汇总抖音/小红书/视频号等各平台运营数据 | 每周 |
+| 内容发布排期表 | 规划月度内容排期与状态追踪 | 每月 |
+| KPI追踪表 | 追踪核心指标完成进度 | 持续 |
+| 竞品数据对比表 | 多品牌新媒体表现横向对比 | 每月 |
+| 月度运营数据表 | 月度完整运营数据汇总分析 | 每月 |
 
 ## 表格规范
 
 ### 表头样式
-- 背景色: 集团深蓝 (#1F3864)，白色加粗文字
-- 行高: 28pt
+- 背景色: 品牌主色，白色加粗文字
+- 行高: 不低于 25pt
 - 对齐: 水平居中，垂直居中
 - 字体: 微软雅黑 Bold，11pt
 
-### 数字格式
-- 金额: #,##0.00，千分位两位小数
-- 百分比: 0.0%，一位小数
-- 整数: #,##0，千分位无小数
-- 日期: YYYY-MM-DD
+### 数据格式
+- 数值: 千分位分隔，右对齐
+- 百分比: 保留1位小数，如 "12.5%"
+- 日期: YYYY-MM-DD 格式
+- 文本: 左对齐，避免过长换行
 
 ### 条件格式
-- 预算执行率 > 90%: 黄色背景警告
-- 预算执行率 > 100%: 红色背景超预算告警
-- ROI > 3: 绿色标记高效活动
-- ROI < 1: 红色标记低效活动
-- 核销超期: 红色字体加粗
+- 环比增长 > 10%: 绿色背景
+- 环比下降 > 10%: 红色背景
+- KPI完成率 > 100%: 绿色字体加粗
+- KPI完成率 < 60%: 红色字体加粗
 
-### 结构化规范
-- 首行冻结
-- 筛选器开启（AutoFilter）
-- 关键列分组（Group）
-- 汇总行加粗边框加双线底部
+### 冻结窗格
+- 首行（表头行）始终冻结
+- 首列（指标名称）在数据较多时冻结
+
+## 四品牌专用模板
+
+### 1. 周报数据表结构
+| 列: 平台 | 粉丝数 | 本周新增 | 发布量 | 曝光量 | 互动量 | 互动率 | 转化数 | 转化率 | 环比趋势 |
+
+### 2. 月度汇总表结构
+| 列: 平台 | 月初粉丝 | 月末粉丝 | 净增 | 总发布量 | 总曝光 | 总互动 | 平均互动率 | 总线索 | 线索成本 | KPI达成率 |
+
+### 3. 活动效果评估表结构
+| 列: 活动名称 | 活动时间 | 预算 | 实际花费 | 曝光量 | 互动量 | 线索数 | CPL | ROI | 目标达成率 |
 
 ## Python 代码模板 (openpyxl)
 
-### 基础配置
+### 四品牌配色
 
 ```python
 from openpyxl import Workbook
 from openpyxl.styles import (
-    Font, PatternFill, Alignment, Border, Side, NamedStyle, numbers
+    Font, PatternFill, Alignment, Border, Side,
+    numbers
 )
 from openpyxl.utils import get_column_letter
-from openpyxl.formatting.rule import CellIsRule, FormulaRule
+from openpyxl.formatting.rule import CellIsRule
 from openpyxl.worksheet.datavalidation import DataValidation
 from datetime import datetime
 
-# 集团配色
-HEADER_FILL = PatternFill(start_color="1F3864", end_color="1F3864", fill_type="solid")
-HEADER_FONT = Font(name="微软雅黑", bold=True, color="FFFFFF", size=11)
-ALT_ROW_FILL = PatternFill(start_color="DDEBF7", end_color="DDEBF7", fill_type="solid")
-TOTAL_FILL = PatternFill(start_color="BDD7EE", end_color="BDD7EE", fill_type="solid")
+BRAND_STYLES = {
+    "trumpchi": {
+        "header_fill": PatternFill(start_color="0052CC", end_color="0052CC", fill_type="solid"),
+        "header_font": Font(name="微软雅黑", bold=True, color="FFFFFF", size=11),
+        "alt_fill": PatternFill(start_color="E6F2FF", end_color="E6F2FF", fill_type="solid"),
+        "name": "广汽传祺",
+    },
+    "audi": {
+        "header_fill": PatternFill(start_color="000000", end_color="000000", fill_type="solid"),
+        "header_font": Font(name="Arial", bold=True, color="FFFFFF", size=11),
+        "alt_fill": PatternFill(start_color="F5F5F5", end_color="F5F5F5", fill_type="solid"),
+        "name": "上汽奥迪",
+    },
+    "hyper": {
+        "header_fill": PatternFill(start_color="6A0DAD", end_color="6A0DAD", fill_type="solid"),
+        "header_font": Font(name="阿里巴巴普惠体", bold=True, color="FFFFFF", size=11),
+        "alt_fill": PatternFill(start_color="F0E6FF", end_color="F0E6FF", fill_type="solid"),
+        "name": "广汽昊铂",
+    },
+    "aion": {
+        "header_fill": PatternFill(start_color="00A86B", end_color="00A86B", fill_type="solid"),
+        "header_font": Font(name="微软雅黑", bold=True, color="FFFFFF", size=11),
+        "alt_fill": PatternFill(start_color="E8F5E9", end_color="E8F5E9", fill_type="solid"),
+        "name": "广汽埃安",
+    },
+}
 
-# 告警色
-WARNING_FILL = PatternFill(start_color="FFEB9C", end_color="FFEB9C", fill_type="solid")
-OVER_BUDGET_FILL = PatternFill(start_color="FFC7CE", end_color="FFC7CE", fill_type="solid")
-GOOD_FILL = PatternFill(start_color="C6EFCE", end_color="C6EFCE", fill_type="solid")
-
+# 通用边框
 thin_border = Border(
     left=Side(style="thin"),
     right=Side(style="thin"),
     top=Side(style="thin"),
     bottom=Side(style="thin"),
 )
-
-# 数字格式
-FMT_MONEY = '#,##0.00'
-FMT_PCT = '0.0%'
-FMT_INT = '#,##0'
-FMT_DATE = 'YYYY-MM-DD'
 ```
 
-### 通用工具函数
+### 基础表格创建函数
 
 ```python
-def create_workbook(sheet_name="数据表"):
-    """创建标准Workbook"""
+def create_styled_workbook(brand, sheet_name="数据表"):
+    """创建带品牌样式的Workbook"""
     wb = Workbook()
     ws = wb.active
     ws.title = sheet_name
     return wb, ws
 
 
-def write_headers(ws, headers, row=1):
-    """写入表头"""
+def write_header(ws, brand, headers, row=1):
+    """写入表头并应用品牌样式"""
+    styles = BRAND_STYLES.get(brand, BRAND_STYLES["trumpchi"])
     for col_idx, header in enumerate(headers, 1):
         cell = ws.cell(row=row, column=col_idx, value=header)
-        cell.fill = HEADER_FILL
-        cell.font = HEADER_FONT
-        cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        cell.fill = styles["header_fill"]
+        cell.font = styles["header_font"]
+        cell.alignment = Alignment(horizontal="center", vertical="center")
         cell.border = thin_border
-    ws.row_dimensions[row].height = 30
+    ws.row_dimensions[row].height = 28
 
 
-def write_data(ws, data_rows, start_row=2, alt_fill=True):
-    """写入数据行"""
-    for row_idx, row_data in enumerate(data_rows):
+def write_data_rows(ws, brand, row_data_list, start_row=2):
+    """写入数据行并应用交替背景色"""
+    styles = BRAND_STYLES.get(brand, BRAND_STYLES["trumpchi"])
+    for row_idx, row_data in enumerate(row_data_list):
         current_row = start_row + row_idx
         for col_idx, value in enumerate(row_data, 1):
             cell = ws.cell(row=current_row, column=col_idx, value=value)
             cell.border = thin_border
-            cell.alignment = Alignment(vertical="center")
-            if alt_fill and row_idx % 2 == 1:
-                cell.fill = ALT_ROW_FILL
+            cell.alignment = Alignment(horizontal="center", vertical="center")
+            if (row_idx + 1) % 2 == 1:
+                cell.fill = styles["alt_fill"]
 
 
-def apply_number_format(ws, col_letter, start_row, end_row, fmt):
-    """应用数字格式"""
-    for row in range(start_row, end_row + 1):
-        ws[f"{col_letter}{row}"].number_format = fmt
+def apply_conditional_formatting(ws, brand, col_letter, start_row, end_row):
+    """为百分比/环比列应用条件格式"""
+    range_str = f"{col_letter}{start_row}:{col_letter}{end_row}"
+
+    # 正值绿色
+    ws.conditional_formatting.add(
+        range_str,
+        CellIsRule(operator="greaterThan", formula=["0"],
+                  fill=PatternFill(start_color="C6EFCE", end_color="C6EFCE", fill_type="solid"),
+                  font=Font(color="006100"))
+    )
+    # 负值红色
+    ws.conditional_formatting.add(
+        range_str,
+        CellIsRule(operator="lessThan", formula=["0"],
+                  fill=PatternFill(start_color="FFC7CE", end_color="FFC7CE", fill_type="solid"),
+                  font=Font(color="9C0006"))
+    )
 
 
-def setup_worksheet(ws, auto_filter=True, freeze=True):
-    """工作表基础设置"""
-    if auto_filter and ws.max_row > 1:
-        ws.auto_filter.ref = f"A1:{get_column_letter(ws.max_column)}{ws.max_row}"
-    if freeze:
-        ws.freeze_panes = "A2"
+def freeze_panes(ws, cell="A2"):
+    """冻结首行"""
+    ws.freeze_panes = cell
 
 
-def auto_fit_columns(ws, min_width=10, max_width=45):
+def auto_width(ws, min_width=10, max_width=40):
     """自适应列宽"""
     for col in ws.columns:
         column = col[0].column_letter
-        max_len = 0
+        max_length = 0
         for cell in col:
             if cell.value:
-                # 中文字符宽度按2计算
-                text = str(cell.value)
-                length = sum(2 if ord(c) > 127 else 1 for c in text)
-                max_len = max(max_len, length)
-        ws.column_dimensions[column].width = min(max(max_len + 4, min_width), max_width)
+                max_length = max(max_length, len(str(cell.value)))
+        adjusted = max(min(max_length + 4, max_width), min_width)
+        ws.column_dimensions[column].width = adjusted
 ```
 
-### 市场费用明细表
+### 周报数据表完整示例
 
 ```python
-def generate_expense_detail(data, output_path):
-    """生成市场费用明细表
-    data: {
-        "month": "2026-05",
-        "rows": [[品牌, 区域, 费用类型, 预算金额, 实际金额, 执行率, 核销状态, 备注], ...]
-    }
-    """
-    wb, ws = create_workbook(f"{data.get('month', '')}市场费用明细")
+def generate_weekly_data_table(brand, data, output_path):
+    """生成新媒体周报数据表"""
+    wb, ws = create_styled_workbook(brand, "周报数据")
 
     headers = [
-        "品牌", "区域", "费用类型", "预算金额",
-        "实际执行", "执行率", "核销状态", "申请日期", "备注"
+        "平台", "粉丝数", "本周新增", "发布量",
+        "曝光量", "互动量", "互动率", "转化数", "转化率", "环比趋势"
     ]
-    write_headers(ws, headers)
-    write_data(ws, data["rows"])
+    write_header(ws, brand, headers)
 
-    last_row = len(data["rows"]) + 1
+    write_data_rows(ws, brand, data["platforms"])
 
-    # 数字格式
-    apply_number_format(ws, "D", 2, last_row, FMT_MONEY)
-    apply_number_format(ws, "E", 2, last_row, FMT_MONEY)
-    apply_number_format(ws, "F", 2, last_row, FMT_PCT)
+    # 条件格式：环比趋势列 (第10列)
+    last_row = len(data["platforms"]) + 1
+    apply_conditional_formatting(ws, brand, "J", 2, last_row)
 
-    # 条件格式：执行率告警
-    rate_col = "F"
+    freeze_panes(ws)
+    auto_width(ws)
+
+    wb.save(output_path)
+    return output_path
+```
+
+### 内容排期表
+
+```python
+def generate_content_calendar(brand, schedule_data, output_path):
+    """生成内容发布排期表"""
+    wb, ws = create_styled_workbook(brand, "内容排期")
+
+    headers = [
+        "日期", "平台", "内容标题", "内容类型",
+        "目标人群", "发布时间", "状态", "负责人", "备注"
+    ]
+    write_header(ws, brand, headers)
+
+    write_data_rows(ws, brand, schedule_data["schedule"])
+
+    # 状态列数据验证
+    dv = DataValidation(type="list", formula1='"待发布,已发布,制作中,审核中"', allow_blank=True)
+    status_col = get_column_letter(7)  # 状态列
+    dv.add(f"{status_col}2:{status_col}{len(schedule_data['schedule']) + 1}")
+    ws.add_data_validation(dv)
+
+    freeze_panes(ws)
+    auto_width(ws)
+
+    wb.save(output_path)
+    return output_path
+```
+
+### KPI追踪表
+
+```python
+def generate_kpi_tracker(brand, kpi_data, output_path):
+    """生成KPI追踪表"""
+    wb, ws = create_styled_workbook(brand, "KPI追踪")
+
+    headers = [
+        "指标", "年度目标", "本月目标", "当前完成",
+        "完成率", "剩余", "日均需完成", "趋势", "状态"
+    ]
+    write_header(ws, brand, headers)
+
+    write_data_rows(ws, brand, kpi_data["metrics"])
+
+    last_row = len(kpi_data["metrics"]) + 1
+
+    # 完成率列条件格式
+    completion_col = get_column_letter(5)
     ws.conditional_formatting.add(
-        f"{rate_col}2:{rate_col}{last_row}",
+        f"{completion_col}2:{completion_col}{last_row}",
         CellIsRule(operator="greaterThan", formula=["1"],
-                  fill=OVER_BUDGET_FILL, font=Font(bold=True, color="9C0006"))
+                  fill=PatternFill(start_color="C6EFCE", end_color="C6EFCE", fill_type="solid"),
+                  font=Font(bold=True, color="006100"))
     )
     ws.conditional_formatting.add(
-        f"{rate_col}2:{rate_col}{last_row}",
-        CellIsRule(operator="between", formula=["0.9", "1"],
-                  fill=WARNING_FILL, font=Font(bold=True))
+        f"{completion_col}2:{completion_col}{last_row}",
+        CellIsRule(operator="lessThan", formula=["0.6"],
+                  fill=PatternFill(start_color="FFC7CE", end_color="FFC7CE", fill_type="solid"),
+                  font=Font(bold=True, color="9C0006"))
     )
 
-    # 核销状态数据验证
-    dv = DataValidation(
-        type="list",
-        formula1='"已核销,待核销,核销中,超期未核"',
-        allow_blank=True
-    )
-    dv.add(f"G2:G{last_row}")
-    ws.add_data_validation(dv)
-
-    setup_worksheet(ws)
-    auto_fit_columns(ws)
+    freeze_panes(ws)
+    auto_width(ws)
 
     wb.save(output_path)
     return output_path
 ```
 
-### 预算执行追踪表
+### 竞品数据对比表
 
 ```python
-def generate_budget_tracker(data, output_path):
-    """生成预算执行追踪表"""
-    wb, ws = create_workbook(f"{data.get('year', '')}年预算执行追踪")
+def generate_competitor_comparison(brand, comp_data, output_path):
+    """生成竞品数据对比表"""
+    wb, ws = create_styled_workbook(brand, "竞品对比")
 
     headers = [
-        "月份", "年度预算", "累计预算", "当月执行",
-        "累计执行", "累计执行率", "剩余预算", "剩余占比", "预警"
+        "品牌", "平台", "粉丝数", "月发布量",
+        "月曝光量", "月互动量", "互动率", "月线索数",
+        "预估投放费用", "综合评分"
     ]
-    write_headers(ws, headers)
-    write_data(ws, data["rows"])
+    write_header(ws, brand, headers)
 
-    last_row = len(data["rows"]) + 1
+    write_data_rows(ws, brand, comp_data["competitors"])
 
-    # 数字格式
-    for col_letter in ["B", "C", "D", "E", "G"]:
-        apply_number_format(ws, col_letter, 2, last_row, FMT_MONEY)
-    apply_number_format(ws, "F", 2, last_row, FMT_PCT)
-    apply_number_format(ws, "H", 2, last_row, FMT_PCT)
-
-    # 条件格式：累计执行率
+    # 综合评分列 (第10列) 条件格式
+    last_row = len(comp_data["competitors"]) + 1
+    score_col = get_column_letter(10)
     ws.conditional_formatting.add(
-        f"F2:F{last_row}",
-        CellIsRule(operator="greaterThan", formula=["1"],
-                  fill=OVER_BUDGET_FILL, font=Font(bold=True, color="9C0006"))
-    )
-    ws.conditional_formatting.add(
-        f"F2:F{last_row}",
-        CellIsRule(operator="between", formula=["0.85", "1"],
-                  fill=WARNING_FILL, font=Font(bold=True))
+        f"{score_col}2:{score_col}{last_row}",
+        CellIsRule(operator="greaterThan", formula=["80"],
+                  fill=PatternFill(start_color="C6EFCE", end_color="C6EFCE", fill_type="solid"))
     )
 
-    # 剩余占比告警：低于15%
-    ws.conditional_formatting.add(
-        f"H2:H{last_row}",
-        CellIsRule(operator="lessThan", formula=["0.15"],
-                  fill=OVER_BUDGET_FILL, font=Font(bold=True, color="9C0006"))
-    )
-
-    setup_worksheet(ws)
-    auto_fit_columns(ws)
+    freeze_panes(ws)
+    auto_width(ws)
 
     wb.save(output_path)
     return output_path
 ```
 
-### 活动效果评估表
+## 表格质量标准检查清单
 
-```python
-def generate_campaign_evaluation(data, output_path):
-    """生成活动效果评估表"""
-    wb, ws = create_workbook("活动效果评估")
+### 数据准确性
+- [ ] 所有数据可追溯到原始来源
+- [ ] 公式计算无误，无循环引用
+- [ ] 数据格式统一（日期/数字/百分比）
 
-    headers = [
-        "活动名称", "品牌", "活动日期", "预算", "实际花费",
-        "曝光量", "互动量", "线索数", "成交数", "CPL",
-        "ROI", "目标达成率", "综合评分", "备注"
-    ]
-    write_headers(ws, headers)
-    write_data(ws, data["rows"])
-
-    last_row = len(data["rows"]) + 1
-
-    # 数字格式
-    apply_number_format(ws, "D", 2, last_row, FMT_MONEY)
-    apply_number_format(ws, "E", 2, last_row, FMT_MONEY)
-    apply_number_format(ws, "F", 2, last_row, FMT_INT)
-    apply_number_format(ws, "G", 2, last_row, FMT_INT)
-    apply_number_format(ws, "H", 2, last_row, FMT_INT)
-    apply_number_format(ws, "I", 2, last_row, FMT_INT)
-    apply_number_format(ws, "J", 2, last_row, FMT_MONEY)
-    apply_number_format(ws, "K", 2, last_row, "0.00")
-    apply_number_format(ws, "L", 2, last_row, FMT_PCT)
-
-    # 条件格式
-    # ROI >= 3 高效绿色
-    ws.conditional_formatting.add(
-        f"K2:K{last_row}",
-        CellIsRule(operator="greaterThanOrEqual", formula=["3"],
-                  fill=GOOD_FILL, font=Font(bold=True, color="006100"))
-    )
-    # ROI < 1 低效红色
-    ws.conditional_formatting.add(
-        f"K2:K{last_row}",
-        CellIsRule(operator="lessThan", formula=["1"],
-                  fill=OVER_BUDGET_FILL, font=Font(bold=True, color="9C0006"))
-    )
-    # 目标达成率 >= 100% 绿色
-    ws.conditional_formatting.add(
-        f"L2:L{last_row}",
-        CellIsRule(operator="greaterThanOrEqual", formula=["1"],
-                  fill=GOOD_FILL, font=Font(bold=True, color="006100"))
-    )
-
-    setup_worksheet(ws)
-    auto_fit_columns(ws)
-
-    wb.save(output_path)
-    return output_path
-```
-
-### 线索转化追踪表
-
-```python
-def generate_lead_tracker(data, output_path):
-    """生成线索转化追踪表"""
-    wb, ws = create_workbook("线索转化追踪")
-
-    headers = [
-        "线索ID", "来源渠道", "品牌", "获取日期", "线索等级",
-        "首次跟进日期", "跟进次数", "试驾日期", "成交日期",
-        "转化周期(天)", "成交金额", "跟进销售", "状态"
-    ]
-    write_headers(ws, headers)
-    write_data(ws, data["rows"])
-
-    last_row = len(data["rows"]) + 1
-
-    apply_number_format(ws, "K", 2, last_row, FMT_INT)
-    apply_number_format(ws, "L", 2, last_row, FMT_MONEY)
-
-    # 状态数据验证
-    dv = DataValidation(
-        type="list",
-        formula1='"待跟进,跟进中,已试驾,已成交,已战败"',
-        allow_blank=True
-    )
-    dv.add(f"M2:M{last_row}")
-    ws.add_data_validation(dv)
-
-    # 转化周期 <= 7天 绿色（高效转化）
-    ws.conditional_formatting.add(
-        f"K2:K{last_row}",
-        CellIsRule(operator="lessThanOrEqual", formula=["7"],
-                  fill=GOOD_FILL, font=Font(bold=True, color="006100"))
-    )
-
-    setup_worksheet(ws)
-    auto_fit_columns(ws)
-
-    wb.save(output_path)
-    return output_path
-```
-
-### 竞品动态监测表
-
-```python
-def generate_competitor_monitor(data, output_path):
-    """生成竞品动态监测表"""
-    wb, ws = create_workbook("竞品动态监测")
-
-    headers = [
-        "日期", "竞品品牌", "活动类型", "活动主题",
-        "活动区域", "预估费用(万)", "活动亮点", "效果评估",
-        "对我方影响", "应对建议", "记录人"
-    ]
-    write_headers(ws, headers)
-    write_data(ws, data["rows"])
-
-    last_row = len(data["rows"]) + 1
-
-    apply_number_format(ws, "F", 2, last_row, FMT_MONEY)
-
-    # 影响等级数据验证
-    dv = DataValidation(
-        type="list",
-        formula1='"高,中,低"',
-        allow_blank=True
-    )
-    dv.add(f"I2:I{last_row}")
-    ws.add_data_validation(dv)
-
-    setup_worksheet(ws)
-    auto_fit_columns(ws)
-
-    wb.save(output_path)
-    return output_path
-```
-
-## 质量标准检查清单
-
-### 数据质量
-- [ ] 原始数据可追溯，口径一致
-- [ ] 公式正确无误，无循环引用
-- [ ] 金额单位标注清晰（元/万元）
+### 可读性
+- [ ] 表头清晰，冻结窗格
+- [ ] 列宽自适应，无截断内容
+- [ ] 条件格式正确标识异常值
 
 ### 专业性
-- [ ] 集团配色一致，商务风格
-- [ ] 数字格式统一规范
-- [ ] 条件格式正确标示异常
-
-### 可用性
-- [ ] 冻结首行，开启筛选
-- [ ] 列宽适配，打印区域设置
-- [ ] 关键列有数据验证
-- [ ] 敏感数据标注"内部"
+- [ ] 品牌配色一致
+- [ ] 字体统一，层级分明
+- [ ] 打印设置合理（页边距/页眉页脚）
 
 ## 使用方式
 
 在 Agent 指令中调用：
 
 ```
-使用 spreadsheet-generation 技能生成 [类型] 表格:
-- 类型: expense_detail / budget_tracker / campaign_eval / lead_tracker / competitor_monitor
+使用 spreadsheet-generation 技能为 [品牌] 生成 [类型] 表格:
+- 品牌: trumpchi / audi / hyper / aion
+- 类型: weekly / monthly / calendar / kpi / competitor
 - 数据: [提供具体数据]
 
 生成脚本参考 scripts/make_excel.py
